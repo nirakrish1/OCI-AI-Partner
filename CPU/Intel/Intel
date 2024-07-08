@@ -1,1 +1,78 @@
+HPC Benchmark setup using MPICH and OSU_benchmark
 
+Download the MPICH kit - https://www.mpich.org/downloads/
+
+Step1: Install OL9 and update the OS
+
+Step2: Install - sudo dnf group install "Development Tools"
+				   sudo dnf install gcc-gfortran
+
+                                  sudo systemctl disable firewalld --now
+
+Step 3: Setup ssh-keygen -t rsa and update authorized keys
+
+Step 4: update /etc/hosts file with all hostnames and do ssh to other host using hostname
+
+Step 5: copy mpich-4.2.0 and osu-micro-benchmarks-7.3 to each host
+
+Step 6: unpack both the tar file
+                tar -zxfz mpich4.2.0.tar.gz
+                tar -zxvf  osu-micro-benchmarks-7.3.tar.gz
+
+Step 7: create directory - mkdir -p /home/opc/mpich-install
+
+Step 8: Create temp directory - mkdir  -p /tmp/opc/mpich-4.2.0
+
+Step 9: go to the temp directory - cd /tmp/opc/mpich-4.2.0
+
+Step 10: Run the command - /home/opc/mpich-4.2.0/configure -prefix=/home/opc/mpich-install |& tee c.txt
+
+Step 11: Make the file from the existing directory - make |& tee m.txt  
+
+Step 12: Make installation the mpich from the current directory - make install |& tee mi.txt
+
+Step 13: Set the env variable in .bash_profile - export PATH=$PATH:/home/opc/mpich-install/bin
+
+Step 14: Test MPICH - mpirun -np 2 -hosts  host1,host2  hostname
+
+OSU Benchmark Kit Installation:
+
+https://mvapich.cse.ohio-state.edu/benchmarks/  click on the tarball to download the tar file
+
+Step 1:  tar -zxvf  osu-micro-benchmarks-7.3.tar.gz (if not done)
+
+Step 2: Go to the extracted directory - cd osu-micro-benchmarks-7.3
+
+Step 3: Run the command - $ ./configure CC=mpicc CXX=mpicxx
+
+Step 4: Run command - $ make
+
+Step 5:  Run the command - $ sudo make install
+
+Step 6: go to the directory - /home/opc/osu-micro-benchmarks-7.3/c/mpi/pt2pt/standard
+
+Step 7: Run the command - mpirun -np 2 -hosts  host1,host2  ./osu_latency -f > /home/opc/mpich-install/results/latency.out &&2>1
+
+Intel MPI:
+
+Install Intel MPI - https://www.intel.com/content/www/us/en/developer/tools/oneapi/hpc-toolkit-download.html?operatingsystem=linux&distributions=yumpackagemanager 
+
+Step 1: Create temp file
+
+tee > /tmp/oneAPI.repo << EOF
+[oneAPI]
+name=Intel® oneAPI repository
+baseurl=https://yum.repos.intel.com/oneapi
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB
+EOF
+
+Step 2:
+
+sudo mv /tmp/oneAPI.repo /etc/yum.repos.d
+
+Step 3: yum install intel-hpckit
+
+The kit will be install in /opt/Intel 
